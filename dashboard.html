@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}SENTINEL OS - World-Class Traffic Command Center{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-shield-halved" style="color: var(--cyan-primary);"></i> SENTINEL Traffic Command Center</h1>
+        <div class="page-subtitle">World-class AI traffic telemetry, Emergency Green Corridor dispatch, and adaptive signal optimization</div>
+    </div>
+    <a href="/upload" class="btn btn-primary">
+        <i class="fas fa-camera"></i> Run Media Scan
+    </a>
+</div>
+
+<!-- WORLD-CLASS INNOVATIONS BANNER -->
+<div class="glass-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(0, 255, 157, 0.08)); border: 1px solid rgba(0, 240, 255, 0.3);">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(0, 255, 157, 0.2); border: 1px solid var(--emerald-success); display: flex; align-items: center; justify-content: center; color: var(--emerald-success); font-size: 1.4rem;">
+                <i class="fas fa-truck-medical"></i>
+            </div>
+            <div>
+                <div style="font-weight: 800; font-size: 1.05rem; color: var(--emerald-success);">EMERGENCY GREEN CORRIDOR: AUTO-DISPATCH ACTIVE</div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary);">Real-time ambulance priority routing & adaptive green signal optimization</div>
+            </div>
+        </div>
+        <div style="display: flex; gap: 16px;">
+            <div style="text-align: right;">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">ADAPTIVE SIGNAL TIMING</div>
+                <div style="font-family: var(--font-code); font-weight: 800; color: var(--cyan-primary); font-size: 1.1rem;">35s OPTIMAL GREEN</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 0.75rem; color: var(--text-muted);">PEDESTRIAN SAFETY INDEX</div>
+                <div style="font-family: var(--font-code); font-weight: 800; color: var(--emerald-success); font-size: 1.1rem;">98.4% HIGH</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 4 HUD METRIC CARDS -->
+<div class="metrics-grid">
+    <div class="glass-card metric-card">
+        <div class="metric-icon cyan">
+            <i class="fas fa-car-burst"></i>
+        </div>
+        <div class="metric-data">
+            <div id="statTotalToday" class="val">0</div>
+            <div class="lbl">Violations Today</div>
+        </div>
+    </div>
+
+    <div class="glass-card metric-card">
+        <div class="metric-icon amber">
+            <i class="fas fa-clock-rotate-left"></i>
+        </div>
+        <div class="metric-data">
+            <div id="statPendingCount" class="val">0</div>
+            <div class="lbl">Pending Review</div>
+        </div>
+    </div>
+
+    <div class="glass-card metric-card">
+        <div class="metric-icon emerald">
+            <i class="fas fa-sack-dollar"></i>
+        </div>
+        <div class="metric-data">
+            <div id="statTotalFines" class="val">$0</div>
+            <div class="lbl">Confirmed Fines</div>
+        </div>
+    </div>
+
+    <div class="glass-card metric-card">
+        <div class="metric-icon crimson">
+            <i class="fas fa-video"></i>
+        </div>
+        <div class="metric-data">
+            <div id="statActiveCameras" class="val">8</div>
+            <div class="lbl">Active CCTV Feeds</div>
+        </div>
+    </div>
+</div>
+
+<!-- CHARTS GRID -->
+<div class="charts-grid">
+    <!-- 7-Day Trend Chart -->
+    <div class="glass-card">
+        <div class="chart-header">
+            <h3 class="chart-title"><i class="fas fa-chart-area" style="color: var(--cyan-primary); margin-right: 8px;"></i> 7-Day Violation Volume Trend</h3>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">UPDATED REALTIME</span>
+        </div>
+        <div style="position: relative; height: 260px;">
+            <canvas id="trendChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Category Breakdown Donut Chart -->
+    <div class="glass-card">
+        <div class="chart-header">
+            <h3 class="chart-title"><i class="fas fa-chart-pie" style="color: var(--amber-warning); margin-right: 8px;"></i> Incident Breakdown</h3>
+        </div>
+        <div style="position: relative; height: 260px;">
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- RECENT REVIEWS AUDIT GRID -->
+<div class="glass-card">
+    <div class="chart-header">
+        <h3 class="chart-title"><i class="fas fa-list-check" style="color: var(--emerald-success); margin-right: 8px;"></i> Recent Pending Audits</h3>
+        <a href="/violations" class="btn btn-sm btn-secondary">View All Logs</a>
+    </div>
+
+    <div class="table-container">
+        <table class="glass-table">
+            <thead>
+                <tr>
+                    <th>License Plate</th>
+                    <th>Violation Category</th>
+                    <th>Location</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="recentTableBody">
+                <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Loading recent incident logs...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- AUDIT REVIEW MODAL -->
+<div id="auditModal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 class="modal-title">Review Incident <span id="modalViolationId" style="color: var(--cyan-primary);">#0</span></h3>
+            <button class="btn-close" onclick="closeAuditModal()"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+            <div>
+                <img id="modalImage" src="" alt="Detection Snapshot" style="width: 100%; border-radius: var(--radius-md); border: var(--border-glass);">
+            </div>
+            <div>
+                <div style="margin-bottom: 10px;">
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">DETECTED LICENSE PLATE</div>
+                    <div id="modalPlate" class="plate-badge" style="display: inline-block; font-size: 1.1rem; margin-top: 4px;">--</div>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">VIOLATION TYPE</div>
+                    <div id="modalType" style="font-weight: 700; color: var(--crimson-danger); font-size: 0.95rem; margin-top: 2px;">--</div>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">LOCATION</div>
+                    <div id="modalLocation" style="font-size: 0.85rem; color: var(--text-secondary);">--</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Suggested Fine Amount ($)</label>
+            <input type="number" id="modalFine" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Officer Audit Notes</label>
+            <textarea id="modalNotes" class="form-control" rows="2" placeholder="Add officer verification comments..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+            <button class="btn btn-secondary" onclick="updateAuditStatus('dismissed')">
+                <i class="fas fa-ban"></i> Dismiss
+            </button>
+            <button class="btn btn-primary" onclick="updateAuditStatus('confirmed')">
+                <i class="fas fa-check-circle"></i> Confirm Violation
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

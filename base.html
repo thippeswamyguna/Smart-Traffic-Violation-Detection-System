@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SENTINEL OS - Smart Traffic Detection System{% endblock %}</title>
+    
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for Data Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Three.js & GSAP CDN Libraries for 3D WebGL Particle Telemetry -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Sentri OS Glassmorphism CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- WebGL 3D Particle Telemetry Canvas Background -->
+    <canvas id="webgl-bg" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; opacity: 0.65;"></canvas>
+
+    {% if request.path != '/' %}
+    <!-- OS COMMAND TASKBAR HEADER -->
+    <header class="os-header">
+        <a href="/dashboard" class="brand-title">
+            <i class="fas fa-shield-halved"></i>
+            <span>SENTINEL OS</span>
+            <span class="brand-badge">v2.4 WebGL-AI</span>
+        </a>
+
+        <div class="os-status-bar">
+            <div class="status-item">
+                <span class="status-dot"></span>
+                <span>YOLOv8 & EasyOCR Core: <b>ONLINE</b></span>
+            </div>
+            <div class="status-item">
+                <i class="far fa-clock" style="color: var(--cyan-primary);"></i>
+                <span id="digitalClock" class="digital-clock">00:00:00</span>
+            </div>
+        </div>
+
+        <div id="userProfileMenu" class="user-profile-menu">
+            <!-- User details and logout button rendered dynamically by common.js -->
+        </div>
+    </header>
+
+    <!-- FLOATING SIDEBAR COMMAND DOCK -->
+    <nav class="sidebar-dock">
+        <ul class="nav-menu">
+            <li>
+                <a href="/dashboard" class="nav-link {% if request.path == '/dashboard' %}active{% endif %}">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="/upload" class="nav-link {% if request.path == '/upload' %}active{% endif %}">
+                    <i class="fas fa-camera-retro"></i>
+                    <span>Media Upload</span>
+                </a>
+            </li>
+            <li>
+                <a href="/live" class="nav-link {% if request.path == '/live' %}active{% endif %}">
+                    <i class="fas fa-video"></i>
+                    <span>Live Monitor</span>
+                </a>
+            </li>
+            <li>
+                <a href="/violations" class="nav-link {% if request.path == '/violations' %}active{% endif %}">
+                    <i class="fas fa-list-check"></i>
+                    <span>Violations Log</span>
+                </a>
+            </li>
+            <li>
+                <a href="/report" class="nav-link {% if request.path == '/report' %}active{% endif %}">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>PDF Reports</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <div class="sys-version">SENTINEL // DEEPMIND</div>
+            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">SECURE TRAFFIC AI ENFORCEMENT</div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <!-- MAIN PAGE WORKSPACE -->
+    <main class="{% if request.path != '/' %}main-content{% endif %}">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Shared Global Scripts -->
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/three_particles.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

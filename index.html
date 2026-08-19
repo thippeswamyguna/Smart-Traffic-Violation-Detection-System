@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Sentri OS - Secure Login Portal{% endblock %}
+
+{% block content %}
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div class="glass-card" style="width: 100%; max-width: 440px; border: var(--border-glass-glow); padding: 36px 32px;">
+        
+        <!-- Brand Header -->
+        <div style="text-align: center; margin-bottom: 28px;">
+            <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.3); color: var(--cyan-primary); font-size: 1.8rem; margin-bottom: 16px; box-shadow: var(--shadow-neon-cyan);">
+                <i class="fas fa-shield-halved"></i>
+            </div>
+            <h2 style="font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px;">SENTRI OS PORTAL</h2>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 4px;">Smart Traffic Enforcement Station Access</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+            <div class="form-group">
+                <label class="form-label" for="username">Operator Identifier / Username</label>
+                <div style="position: relative;">
+                    <i class="fas fa-user" style="position: absolute; left: 14px; top: 14px; color: var(--text-muted);"></i>
+                    <input type="text" id="username" class="form-control" style="padding-left: 40px;" placeholder="Enter operator username" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Security Password</label>
+                <div style="position: relative;">
+                    <i class="fas fa-lock" style="position: absolute; left: 14px; top: 14px; color: var(--text-muted);"></i>
+                    <input type="password" id="password" class="form-control" style="padding-left: 40px;" placeholder="Enter password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 8px; font-size: 1rem;">
+                <i class="fas fa-key"></i> Authenticate Session
+            </button>
+        </form>
+
+        <!-- Quick Fill Credentials Helper -->
+        <div style="margin-top: 28px; padding-top: 20px; border-top: var(--border-glass);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 12px; text-align: center;">
+                Select Quick Demo Role Account:
+            </div>
+            <div style="display: flex; gap: 8px; justify-content: center;">
+                <button class="btn btn-sm btn-secondary" onclick="quickFill('admin', 'adminpassword')">
+                    <span class="role-pill role-admin">Admin</span>
+                </button>
+                <button class="btn btn-sm btn-secondary" onclick="quickFill('officer', 'officerpassword')">
+                    <span class="role-pill role-officer">Officer</span>
+                </button>
+                <button class="btn btn-sm btn-secondary" onclick="quickFill('viewer', 'viewerpassword')">
+                    <span class="role-pill role-viewer">Viewer</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function quickFill(user, pass) {
+    document.getElementById('username').value = user;
+    document.getElementById('password').value = pass;
+    showToast(`Loaded pre-seeded ${user.toUpperCase()} credentials`, 'info');
+}
+
+async function handleLoginSubmit(e) {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    try {
+        const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            localStorage.setItem('sentri_jwt_token', data.token);
+            localStorage.setItem('sentri_user_data', JSON.stringify(data.user));
+            showToast('Authentication Successful! Launching Sentri OS...', 'success');
+            setTimeout(() => {
+                window.location.href = '/dashboard';
+            }, 600);
+        } else {
+            showToast(data.message || 'Invalid login credentials', 'danger');
+        }
+    } catch (err) {
+        showToast('Error connecting to authentication server', 'danger');
+    }
+}
+</script>
+{% endblock %}

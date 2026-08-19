@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Sentri OS - Violations Audit Log{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-list-check" style="color: var(--cyan-primary);"></i> Violations Audit Grid</h1>
+        <div class="page-subtitle">Search, filter, edit officer notes, update enforcement status, and export CSV spreadsheets</div>
+    </div>
+    <button class="btn btn-primary" onclick="exportCSV()">
+        <i class="fas fa-file-csv"></i> Export Filtered CSV
+    </button>
+</div>
+
+<!-- FILTER TOOLBAR -->
+<div class="filter-bar">
+    <div style="flex: 1; min-width: 200px;">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search by license plate or location...">
+    </div>
+
+    <div>
+        <select id="filterType" class="form-control">
+            <option value="all">All Violation Types</option>
+            <option value="no_helmet">Rider Without Helmet</option>
+            <option value="no_seatbelt">Unbuckled Seatbelt</option>
+            <option value="red_light">Red Light Breach</option>
+            <option value="wrong_way">Wrong-Way Driving</option>
+            <option value="illegal_parking">Illegal Parking Zone</option>
+        </select>
+    </div>
+
+    <div>
+        <select id="filterStatus" class="form-control">
+            <option value="all">All Audit Statuses</option>
+            <option value="pending">Pending Review</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="dismissed">Dismissed</option>
+        </select>
+    </div>
+
+    <div>
+        <input type="date" id="startDate" class="form-control" title="Start Date">
+    </div>
+
+    <div>
+        <input type="date" id="endDate" class="form-control" title="End Date">
+    </div>
+</div>
+
+<!-- DATA GRID TABLE -->
+<div class="glass-card">
+    <div class="table-container">
+        <table class="glass-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>License Plate</th>
+                    <th>Violation Category</th>
+                    <th>Location</th>
+                    <th>Timestamp</th>
+                    <th>Status</th>
+                    <th>Fine ($)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="violationsTableBody">
+                <tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 30px;">Loading violation logs...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PAGINATION FOOTER -->
+    <div id="paginationControls" style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; padding-top: 16px; border-top: var(--border-glass);">
+        <!-- Rendered dynamically -->
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/violations.js') }}"></script>
+{% endblock %}
