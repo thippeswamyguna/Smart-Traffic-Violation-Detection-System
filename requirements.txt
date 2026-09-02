@@ -11,3 +11,4 @@ ultralytics>=8.1.0
 easyocr>=1.7.0
 gunicorn>=21.2.0
 requests>=2.31.0
+routes
